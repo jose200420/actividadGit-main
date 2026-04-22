@@ -4,63 +4,851 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos - Mi Sitio Web</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../src/styles/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --white: #ffffff;
+            --off-white: #f8f8f8;
+            --light-gray: #efefef;
+            --mid-gray: #c8c8c8;
+            --dark-gray: #444444;
+            --near-black: #1a1a1a;
+            --black: #0a0a0a;
+            --border: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--off-white);
+            color: var(--black);
+            overflow-x: hidden;
+        }
+
+        /* ─── NAVBAR ─── */
+        .navbar {
+            background: var(--black) !important;
+            padding: 1rem 0;
+            border-bottom: 2px solid white;
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.05em;
+            color: var(--white) !important;
+        }
+        .nav-link {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            font-size: 0.85rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--mid-gray) !important;
+            padding: 0.4rem 1rem !important;
+            transition: color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { color: var(--white) !important; }
+        .nav-link.active { border-bottom: 1px solid white; }
+
+        /* ─── HERO ─── */
+        .products-hero {
+            background: var(--black);
+            padding: 5rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .products-hero::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 400px; height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+        }
+        .products-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: 8%;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+        }
+        /* diagonal stripe texture */
+        .products-hero .texture {
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            background-image: repeating-linear-gradient(
+                45deg,
+                white 0px, white 1px,
+                transparent 1px, transparent 18px
+            );
+        }
+        .hero-eyebrow {
+            font-size: 0.75rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1;
+            color: var(--white);
+        }
+        .hero-title em { font-style: italic; color: var(--mid-gray); }
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.4);
+            max-width: 400px;
+            line-height: 1.7;
+            margin-top: 1.2rem;
+            font-weight: 300;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--mid-gray);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 2rem;
+        }
+
+        /* ─── FILTER BAR ─── */
+        .filter-bar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .filter-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--black);
+            padding: 0.4rem 1.2rem;
+            border-radius: 100px;
+            font-size: 0.78rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--black);
+            color: var(--white);
+            border-color: var(--black);
+        }
+
+        /* ─── SECTION LABEL ─── */
+        .section-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        /* ─── FEATURED CARD ─── */
+        .featured-card {
+            background: var(--black);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(.22,.68,0,1.2);
+        }
+        .featured-card:hover { transform: translateY(-6px); }
+        .featured-card-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.04;
+            background-image: repeating-linear-gradient(
+                45deg,
+                white 0px, white 1px,
+                transparent 1px, transparent 20px
+            );
+        }
+        .featured-badge {
+            position: absolute;
+            top: 1.5rem; left: 1.5rem;
+            background: white;
+            color: var(--black);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2px;
+            z-index: 2;
+            font-weight: 500;
+        }
+        .featured-content { position: relative; z-index: 2; }
+        .featured-category {
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+            margin-bottom: 0.6rem;
+        }
+        .featured-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--white);
+            line-height: 1.2;
+            margin-bottom: 0.8rem;
+        }
+        .featured-price {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--white);
+        }
+        .featured-price span {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.3);
+            text-decoration: line-through;
+            margin-left: 0.5rem;
+        }
+        .btn-featured-add {
+            display: inline-block;
+            margin-top: 1.2rem;
+            background: white;
+            color: var(--black);
+            border: none;
+            padding: 0.75rem 2rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-featured-add:hover { background: var(--light-gray); transform: translateX(4px); }
+
+        /* ─── PRODUCT CARD ─── */
+        .product-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(.22,.68,0,1.2);
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-color: var(--black);
+        }
+        .product-img-wrap {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-emoji {
+            font-size: 5rem;
+            line-height: 1;
+            transition: transform 0.4s ease;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.12)) grayscale(1);
+        }
+        .product-card:hover .product-emoji { transform: scale(1.12) rotate(-4deg); }
+
+        .product-tag {
+            position: absolute;
+            top: 0.8rem; right: 0.8rem;
+            background: var(--black);
+            color: var(--white);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2px;
+        }
+        .product-tag.sale { background: var(--dark-gray); }
+        .product-tag.new  { background: var(--near-black); border: 1px solid var(--mid-gray); }
+
+        .product-info { padding: 1.4rem; }
+        .product-cat {
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--dark-gray);
+            margin-bottom: 0.4rem;
+        }
+        .product-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--black);
+            line-height: 1.3;
+        }
+        .product-desc {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .product-price { font-size: 1.2rem; font-weight: 500; color: var(--black); }
+        .product-price .old {
+            font-size: 0.8rem;
+            color: var(--mid-gray);
+            text-decoration: line-through;
+            display: block;
+            font-weight: 400;
+        }
+        .btn-add {
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            flex-shrink: 0;
+        }
+        .btn-add:hover { background: var(--dark-gray); transform: scale(1.1); }
+
+        /* ─── PROMO BANNER ─── */
+        .promo-banner {
+            background: var(--black);
+            padding: 3rem;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .promo-banner::before {
+            content: '✦';
+            position: absolute;
+            right: 2rem; top: 50%;
+            transform: translateY(-50%);
+            font-size: 9rem;
+            color: rgba(255,255,255,0.04);
+            line-height: 1;
+        }
+        .promo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: white;
+            font-weight: 900;
+        }
+        .promo-title em { font-style: italic; color: var(--mid-gray); }
+        .promo-sub {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+        .btn-promo {
+            display: inline-block;
+            margin-top: 1.5rem;
+            background: white;
+            color: var(--black);
+            border: none;
+            padding: 0.75rem 2rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-promo:hover { background: var(--light-gray); transform: translateX(4px); }
+
+        /* ─── ORNAMENT ─── */
+        .ornament {
+            text-align: center;
+            color: var(--mid-gray);
+            font-size: 1.2rem;
+            letter-spacing: 0.5rem;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            background: var(--black);
+            color: var(--mid-gray);
+            padding: 3rem 0 2rem;
+            border-top: 2px solid white;
+        }
+        .footer-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+        .footer-links a {
+            color: rgba(200,200,200,0.4);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: white; }
+        .footer-divider { border-color: rgba(255,255,255,0.08); }
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.7s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* ─── TOAST ─── */
+        .toast-cart {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            background: var(--black);
+            color: var(--white);
+            padding: 0.9rem 1.5rem;
+            border-radius: 4px;
+            border-left: 3px solid white;
+            font-size: 0.85rem;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(.22,.68,0,1.2);
+        }
+        .toast-cart.show { transform: translateY(0); opacity: 1; }
+
+        /* stars in b&w */
+        .stars { color: var(--dark-gray); font-size: 0.75rem; }
+    </style>
 </head>
 <body>
-    <!-- Navegación -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="../index.html">
-                <strong>Mi Sitio Web</strong>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="../index.html">Mi Sitio Web</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="servicios.html">Servicios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="productos.html">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contactos.html">Contactos</a>
-                    </li>
+                <ul class="navbar-nav ms-auto gap-2">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contactos.html">Contactos</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido Principal -->
-    <main>
-        <section class="py-5">
-            <div class="container">
-                <h1 class="mb-4">Productos</h1>
-                <div class="alert alert-info" role="alert">
-                    <p>Rubiela desarrolló esta página</p>
+    <!-- HERO -->
+    <section class="products-hero">
+        <div class="texture"></div>
+        <div class="container" style="position:relative; z-index:2;">
+            <span class="hero-eyebrow">Catálogo 2026</span>
+            <h1 class="hero-title fade-up">
+                Nuestros<br><em>Productos</em>
+            </h1>
+            <p class="hero-subtitle fade-up delay-1">
+                Piezas únicas seleccionadas con cuidado. Calidad que se siente, estilo que se nota.
+            </p>
+            <div class="hero-badge fade-up delay-2">
+                ✦ Envío gratis en pedidos mayores a $150.000
+            </div>
+        </div>
+    </section>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="container">
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="filter-btn active" onclick="filterBtn(this)">Todos</button>
+                <button class="filter-btn" onclick="filterBtn(this)">Hogar</button>
+                <button class="filter-btn" onclick="filterBtn(this)">Moda</button>
+                <button class="filter-btn" onclick="filterBtn(this)">Cocina</button>
+                <button class="filter-btn" onclick="filterBtn(this)">Bienestar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <main class="py-5">
+        <div class="container">
+
+            <!-- DESTACADO -->
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <span class="section-label">Destacado</span>
+                <div style="flex:1; height:1px; background:var(--border);"></div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- Featured big card -->
+                <div class="col-lg-5 fade-up delay-1">
+                    <div class="featured-card h-100">
+                        <div class="featured-card-pattern"></div>
+                        <div class="featured-badge">⭐ Más Vendido</div>
+                        <div class="featured-content">
+                            <div style="font-size:4rem; margin-bottom:1rem; filter:grayscale(1) drop-shadow(0 8px 20px rgba(0,0,0,0.5))">🪔</div>
+                            <div class="featured-category">Hogar · Decoración</div>
+                            <div class="featured-name">Set de Velas<br>Aromáticas Premium</div>
+                            <div class="stars mb-2">★★★★★ <span style="color:rgba(255,255,255,0.25); font-size:0.75rem;">128 reseñas</span></div>
+                            <div class="featured-price">$89.900 <span>$120.000</span></div>
+                            <button class="btn-featured-add" onclick="addCart(this, 'Set de Velas Aromáticas')">
+                                Agregar al carrito →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Four mini cards -->
+                <div class="col-lg-7">
+                    <div class="row g-4 h-100">
+                        <div class="col-sm-6 fade-up delay-2">
+                            <div class="product-card">
+                                <div class="product-img-wrap" style="background:#e8e8e8;">
+                                    <span class="product-emoji">🌿</span>
+                                    <span class="product-tag new">Nuevo</span>
+                                </div>
+                                <div class="product-info">
+                                    <div class="product-cat">Bienestar</div>
+                                    <div class="product-name">Kit de Plantas Suculentas</div>
+                                    <div class="product-desc">Set de 4 suculentas en macetas artesanales de cerámica.</div>
+                                    <div class="product-footer">
+                                        <div class="product-price">$65.000</div>
+                                        <button class="btn-add" onclick="addCart(this, 'Kit de Plantas Suculentas')">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 fade-up delay-3">
+                            <div class="product-card">
+                                <div class="product-img-wrap" style="background:#e0e0e0;">
+                                    <span class="product-emoji">☕</span>
+                                    <span class="product-tag sale">Oferta</span>
+                                </div>
+                                <div class="product-info">
+                                    <div class="product-cat">Cocina</div>
+                                    <div class="product-name">Taza de Cerámica Artesanal</div>
+                                    <div class="product-desc">Hecha a mano, perfecta para tu café de la mañana.</div>
+                                    <div class="product-footer">
+                                        <div class="product-price">
+                                            <span class="old">$42.000</span>$28.000
+                                        </div>
+                                        <button class="btn-add" onclick="addCart(this, 'Taza de Cerámica')">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 fade-up delay-2">
+                            <div class="product-card">
+                                <div class="product-img-wrap" style="background:#ebebeb;">
+                                    <span class="product-emoji">🧴</span>
+                                </div>
+                                <div class="product-info">
+                                    <div class="product-cat">Bienestar</div>
+                                    <div class="product-name">Crema Corporal Cacao</div>
+                                    <div class="product-desc">Hidratación profunda con manteca de cacao y argán.</div>
+                                    <div class="product-footer">
+                                        <div class="product-price">$48.500</div>
+                                        <button class="btn-add" onclick="addCart(this, 'Crema Corporal')">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 fade-up delay-3">
+                            <div class="product-card">
+                                <div class="product-img-wrap" style="background:#e4e4e4;">
+                                    <span class="product-emoji">🧣</span>
+                                    <span class="product-tag new">Nuevo</span>
+                                </div>
+                                <div class="product-info">
+                                    <div class="product-cat">Moda</div>
+                                    <div class="product-name">Bufanda Tejida a Mano</div>
+                                    <div class="product-desc">Lana merino 100%, colores únicos cada pieza.</div>
+                                    <div class="product-footer">
+                                        <div class="product-price">$95.000</div>
+                                        <button class="btn-add" onclick="addCart(this, 'Bufanda Tejida')">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
+
+            <!-- ORNAMENT -->
+            <div class="ornament my-5">✦ ✦ ✦</div>
+
+            <!-- PROMO BANNER -->
+            <div class="promo-banner mb-5 fade-up">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="promo-title">Semana de <em>Descuentos</em></div>
+                        <div class="promo-sub">Hasta 40% OFF en productos seleccionados · Solo por esta semana</div>
+                    </div>
+                    <div class="col-md-4 mt-3 mt-md-0">
+                        <button class="btn-promo">Ver Ofertas →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLECCIÓN COMPLETA -->
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <span class="section-label">Colección Completa</span>
+                <div style="flex:1; height:1px; background:var(--border);"></div>
+                <span style="font-size:0.78rem; color:var(--mid-gray); letter-spacing:0.08em;">12 productos</span>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-1">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#e8e8e8;">
+                            <span class="product-emoji">🕯️</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Hogar</div>
+                            <div class="product-name">Vela de Soja Natural</div>
+                            <div class="product-desc">Fragancia lavanda y vainilla. 40h de duración.</div>
+                            <div class="product-footer">
+                                <div class="product-price">$32.000</div>
+                                <button class="btn-add" onclick="addCart(this, 'Vela de Soja')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-2">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#e0e0e0;">
+                            <span class="product-emoji">🍳</span>
+                            <span class="product-tag sale">Oferta</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Cocina</div>
+                            <div class="product-name">Sartén de Hierro</div>
+                            <div class="product-desc">Hierro fundido, para toda la vida. Antiadherente natural.</div>
+                            <div class="product-footer">
+                                <div class="product-price">
+                                    <span class="old">$180.000</span>$130.000
+                                </div>
+                                <button class="btn-add" onclick="addCart(this, 'Sartén de Hierro')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-3">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#ebebeb;">
+                            <span class="product-emoji">👜</span>
+                            <span class="product-tag new">Nuevo</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Moda</div>
+                            <div class="product-name">Bolso Cuero Vegano</div>
+                            <div class="product-desc">Materiales sostenibles, diseño atemporal y elegante.</div>
+                            <div class="product-footer">
+                                <div class="product-price">$220.000</div>
+                                <button class="btn-add" onclick="addCart(this, 'Bolso Cuero Vegano')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-4">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#e4e4e4;">
+                            <span class="product-emoji">🧘</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Bienestar</div>
+                            <div class="product-name">Mat de Yoga Premium</div>
+                            <div class="product-desc">Caucho natural, 6mm de grosor, antideslizante total.</div>
+                            <div class="product-footer">
+                                <div class="product-price">$115.000</div>
+                                <button class="btn-add" onclick="addCart(this, 'Mat de Yoga')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-1">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#e8e8e8;">
+                            <span class="product-emoji">🫖</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Cocina</div>
+                            <div class="product-name">Tetera Japonesa</div>
+                            <div class="product-desc">Cerámica tradicional. Incluye 4 tazas a juego.</div>
+                            <div class="product-footer">
+                                <div class="product-price">$98.000</div>
+                                <button class="btn-add" onclick="addCart(this, 'Tetera Japonesa')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-2">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#ebebeb;">
+                            <span class="product-emoji">🪴</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Hogar</div>
+                            <div class="product-name">Maceta Colgante Boho</div>
+                            <div class="product-desc">Macramé hecho a mano, estilo bohemio para tu hogar.</div>
+                            <div class="product-footer">
+                                <div class="product-price">$38.000</div>
+                                <button class="btn-add" onclick="addCart(this, 'Maceta Colgante')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-3">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#e0e0e0;">
+                            <span class="product-emoji">🧤</span>
+                            <span class="product-tag sale">Oferta</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Moda</div>
+                            <div class="product-name">Guantes de Cuero</div>
+                            <div class="product-desc">Cuero genuino forrado en forro polar, talla única.</div>
+                            <div class="product-footer">
+                                <div class="product-price">
+                                    <span class="old">$75.000</span>$52.000
+                                </div>
+                                <button class="btn-add" onclick="addCart(this, 'Guantes de Cuero')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 fade-up delay-4">
+                    <div class="product-card">
+                        <div class="product-img-wrap" style="background:#e8e8e8;">
+                            <span class="product-emoji">🍵</span>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-cat">Bienestar</div>
+                            <div class="product-name">Té Orgánico Mix</div>
+                            <div class="product-desc">Caja con 6 variedades de té orgánico certificado.</div>
+                            <div class="product-footer">
+                                <div class="product-price">$45.000</div>
+                                <button class="btn-add" onclick="addCart(this, 'Té Orgánico Mix')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOAD MORE -->
+            <div class="text-center mt-5">
+                <button style="
+                    background: none;
+                    border: 1px solid var(--black);
+                    color: var(--black);
+                    padding: 0.9rem 3rem;
+                    font-family: 'DM Sans', sans-serif;
+                    font-size: 0.8rem;
+                    letter-spacing: 0.18em;
+                    text-transform: uppercase;
+                    cursor: pointer;
+                    border-radius: 2px;
+                    transition: all 0.25s;
+                "
+                onmouseover="this.style.background='var(--black)'; this.style.color='white';"
+                onmouseout="this.style.background='none'; this.style.color='var(--black)';">
+                    Cargar Más Productos
+                </button>
+            </div>
+
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-4 mt-5">
+    <!-- FOOTER -->
+    <footer>
         <div class="container">
-            <p class="mb-0">&copy; 2026 Mi Sitio Web. Todos los derechos reservados.</p>
-            <small>Desarrollado con HTML, CSS, JavaScript y Bootstrap</small>
+            <div class="row align-items-start g-4">
+                <div class="col-md-4">
+                    <div class="footer-brand">Mi Sitio Web</div>
+                    <p style="font-size:0.82rem; color:rgba(200,200,200,0.4); font-weight:300; line-height:1.7;">
+                        Productos cuidadosamente seleccionados<br>para hacer tu día más especial.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <div style="font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:1rem;">Navegación</div>
+                    <div class="footer-links d-flex flex-column gap-2">
+                        <a href="#">Inicio</a>
+                        <a href="#">Servicios</a>
+                        <a href="#">Productos</a>
+                        <a href="#">Contactos</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:1rem;">Atención al Cliente</div>
+                    <div style="font-size:0.82rem; color:rgba(200,200,200,0.4); font-weight:300; line-height:2;">
+                        📦 Envíos a todo el país<br>
+                        🔄 Cambios sin costo<br>
+                        💬 Soporte 24/7
+                    </div>
+                </div>
+            </div>
+            <hr class="footer-divider my-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <p style="font-size:0.78rem; color:rgba(255,255,255,0.2); margin:0;">&copy; 2026 Mi Sitio Web. Todos los derechos reservados.</p>
+                <p style="font-size:0.75rem; color:rgba(255,255,255,0.1); margin:0;">Desarrollado con HTML, CSS & Bootstrap</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <div class="toast-cart" id="toast">🛒 ¡Agregado al carrito!</div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="../src/scripts/script.js"></script>
+    <script>
+        function filterBtn(el) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+        let toastTimer;
+        function addCart(btn, name) {
+            const toast = document.getElementById('toast');
+            toast.textContent = `🛒 "${name}" agregado al carrito`;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+            btn.style.transform = 'scale(0.8)';
+            setTimeout(() => btn.style.transform = '', 200);
+        }
+    </script>
 </body>
 </html>
